@@ -9,6 +9,12 @@ class Student:
         self.courses_in_progress = []
         self.grades = {}
 
+    def rate_lecture(self, course, grade, lecturer):
+        if course in lecturer.grades:
+            lecturer.grades[course].append(grade)
+        else:
+            lecturer.grades[course] = [grade]
+            return lecturer.grades
 
 class Mentor:
 
@@ -32,14 +38,40 @@ class Lecturer(Mentor):
 
     def __init__(self, name, surname):
         super().__init__(name, surname)
+        self.grades = None
+
+    def __str__(self):
+        grades_list = []
+        for grade in self.grades.values():
+            grades_list.extend(grade)
+        return (f"Имя: {self.name} \nФамилия: {self.surname} \nСредняя оценка: {sum(grades_list) / len(grades_list)}")
 
 class Reviewer(Mentor):
     def __init__(self, name, surname):
         super().__init__(name, surname)
 
+    def rate_hw(self, student, course, grade):
+
+        if course in student.grades:
+            student.grades[course].append(grade)
+        else:
+            student.grades[course] = [grade]
+
+        def __str__(self):
+            return f"Имя: {self.name} \nФамилия: {self.surname}"
+
+
 lecturer = Lecturer('Иван', 'Иванов')
 reviewer = Reviewer('Пётр', 'Петров')
-print(isinstance(lecturer, Mentor)) # True
-print(isinstance(reviewer, Mentor)) # True
-print(lecturer.courses_attached)    # []
-print(reviewer.courses_attached)    # []
+student = Student('Алёхина', 'Ольга', 'Ж')
+
+student.courses_in_progress += ['Python', 'Java']
+lecturer.courses_attached += ['Python', 'C++']
+reviewer.courses_attached += ['Python', 'C++']
+
+print(student.rate_lecture('Python', 7))  # None
+print(student.rate_lecture('Java', 8))  # Ошибка
+print(student.rate_lecture('С++', 8))  # Ошибка
+print(student.rate_lecture('Python', 6))  # Ошибка
+
+print(lecturer.grades)  # {'Python': [7]}  
